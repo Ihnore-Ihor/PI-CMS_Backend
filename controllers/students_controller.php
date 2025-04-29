@@ -66,7 +66,8 @@ class StudentsController {
     private function validate($data, $isUpdate = false) {
         $errors = [];
 
-        if (empty($data['group_name'])) {
+        if (empty($data['group_name']) || !in_array($data['group_name'], ['PZ-22', 'PZ-21', 'PZ-23', 'PZ-24', 'PZ-25',
+                'PZ-26', 'PZ-11', 'PZ-12', 'PZ-13', 'PZ-14', 'PZ-15', 'PZ-16', 'PZ-17'])) {
             $errors['group_name'] = 'Group is required';
         }
 
