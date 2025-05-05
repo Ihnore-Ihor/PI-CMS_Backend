@@ -2,9 +2,8 @@
 class StudentsController {
     private $gateway;
 
-    public function __construct() {
-        $database = new Database();
-        $this->gateway = new StudentsGateway($database);
+    public function __construct($gateway) {
+        $this->gateway = $gateway;
     }
 
     public function index($page) {
