@@ -92,6 +92,32 @@ class StudentsController {
             }
         }
 
+        if (!$isUpdate) {
+            $existingStudent = $this->gateway->findByDetails(
+                $data['first_name'] ?? '',
+                $data['last_name'] ?? '',
+                $data['date_of_birth'] ?? '',
+                $data['group_name'] ?? ''
+            );
+            if ($existingStudent) {
+                $errors['duplicate'] = 'A student with this first name, last name, date of birth, group name already exists';
+            }
+        } else {
+            if (empty($data['id']) || !is_numeric($data['id'])) {
+                $errors['id'] = 'Student ID is required for updates';
+            } else {
+                $existingStudent = $this->gateway->findByDetails(
+                    $data['first_name'] ?? '',
+                    $data['last_name'] ?? '',
+                    $data['date_of_birth'] ?? '',
+                    $data['id']
+                );
+                if ($existingStudent) {
+                    $errors['duplicate'] = 'Another student with this first name, last name, date of birth, group name already exists';
+                }
+            }
+        }
+
         return $errors;
     }
 }

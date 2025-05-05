@@ -82,4 +82,27 @@ class StudentsGateway {
         $stmt->execute();
         return $stmt->fetch();
     }
+
+    public function findByDetails($first_name, $last_name, $date_of_birth, $group_name, $excludeId = null) {
+        $sql = "SELECT * FROM students 
+                WHERE first_name = :first_name 
+                AND last_name = :last_name 
+                AND date_of_birth = :date_of_birth
+                AND group_name = :group_name";
+        if ($excludeId !== null) {
+            $sql .= " AND id != :exclude_id";
+        }
+        $stmt = $this->db->prepare($sql);
+        $params = [
+            ':first_name' => $first_name,
+            ':last_name' => $last_name,
+            ':date_of_birth' => $date_of_birth,
+            ':group_name' => $group_name
+        ];
+        if ($excludeId !== null) {
+            $params[':exclude_id'] = $excludeId;
+        }
+        $stmt->execute($params);
+        return $stmt->fetch();
+    }
 }
