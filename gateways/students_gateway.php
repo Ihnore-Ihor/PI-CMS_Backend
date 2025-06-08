@@ -5,6 +5,7 @@ class StudentsGateway {
 
     public function __construct(Database $database) {
         $this->db = $database->connect();
+        $this->db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     }
 
     public function getAll($page) {
@@ -104,5 +105,17 @@ class StudentsGateway {
         }
         $stmt->execute($params);
         return $stmt->fetch();
+    }
+
+    public function fetchAllStudents() {
+        $sql = "SELECT id, username, group_name, first_name, last_name, gender, date_of_birth, status FROM students";
+        $stmt = $this->db->query($sql);
+        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'success' => true,
+            'students' => $students,
+            'total' => count($students)
+        ];
     }
 }

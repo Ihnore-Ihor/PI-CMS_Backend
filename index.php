@@ -13,13 +13,31 @@ require_once "controllers/jwt_controller.php";
 set_error_handler("ErrorHandler::handleError");
 set_exception_handler("ErrorHandler::handleException");
 
-header("Access-Control-Allow-Origin: http://localhost:63342");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+$allowed_origins = [
+    "http://127.0.0.1:5500",
+    "http://localhost:63342",
+    "http://localhost:5500",
+    "http://localhost:8888",
+    "http://localhost:3000"
+];
 
+// Get the Origin header from the request
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+// Check if the origin is in our allowed list
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: " . $origin);
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Max-Age: 3600"); // Cache preflight for 1 hour
+}
+
+header("Content-Type: application/json; charset=UTF-8");
+
+// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+    http_response_code(204); // No content needed for preflight
     exit();
 }
 
@@ -45,6 +63,8 @@ if ($segments[0] === 'students') {
 
     if ($method === 'GET' && count($segments) === 1) {
         $controller->index($page);
+    } elseif ($method === 'GET' && count($segments) === 2 && $segments[1] === 'all') {
+        $controller->getAllStudents();
     } elseif ($method === 'POST' && count($segments) === 1) {
         $controller->store();
     } elseif ($method === 'PUT' && count($segments) === 2 && is_numeric($segments[1])) {

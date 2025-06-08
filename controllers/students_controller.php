@@ -62,6 +62,15 @@ class StudentsController {
         echo json_encode(['success' => true]);
     }
 
+    public function getAllStudents() {
+        $result = $this->gateway->fetchAllStudents();
+        echo json_encode([
+            'success' => true,
+            'students' => $result['students'],
+            'total' => $result['total']
+        ]);
+    }
+
     private function validate($data, $isUpdate = false) {
         $errors = [];
 
